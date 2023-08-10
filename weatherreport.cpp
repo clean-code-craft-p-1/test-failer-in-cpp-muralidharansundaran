@@ -36,6 +36,17 @@ namespace WeatherSpace
             return 52;
         }
     };
+	class ModifiedSensorStub : public SensorStub {
+		
+
+		int Precipitation() const override {
+			return 61;
+		}
+
+		int WindSpeedKMPH() const override {
+			return 49;
+		}
+	};
     string Report(const IWeatherSensor& sensor)
     {
         int precipitation = sensor.Precipitation();
@@ -62,14 +73,19 @@ namespace WeatherSpace
 
     void TestHighPrecipitation()
     {
-        // This instance of stub needs to be different-
-        // to give high precipitation (>60) and low wind-speed (<50)
-        SensorStub sensor;
+		// This instance of stub needs to be different-
+		// to give high precipitation (>60) and low wind-speed (<50)
+		SensorStub sensor;
 
-        // strengthen the assert to expose the bug
-        // (function returns Sunny day, it should predict rain)
-        string report = Report(sensor);
-        assert(report.length() > 0);
+		// strengthen the assert to expose the bug
+		// (function returns Sunny day, it should predict rain)
+		std::string report = Report(sensor);
+		assert(report.length() > 0);
+		assert(report == "Alert, Stormy with heavy rain");
+
+		ModifiedSensorStub sensor1;
+		report = Report(sensor1);
+		assert(report == "Alert, Stormy with heavy rain");
     }
 }
 
